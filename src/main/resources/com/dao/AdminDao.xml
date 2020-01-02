@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.AdminDao">
+    <resultMap type="com.entity.Admin" id="AdminMap">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+    </resultMap>
+    <!--模糊查询分页-->
+
+    <select id="getAdminAll" resultType="com.entity.Admin">
+      <!--  SET @a=CONCAT('select * from fengmi.admin where ',#{condition},
+        ' order by id DESC limit ',(#{pageNo} - 1)*#{pageSize},',',#{pageSize});
+        PREPARE texts FROM @a;
+        EXECUTE texts;-->
+
+        select * from fengmi.admin where #{condition}  order by id DESC  limit #{begin},#{pageSize}
+
+    </select>
+
+</mapper>

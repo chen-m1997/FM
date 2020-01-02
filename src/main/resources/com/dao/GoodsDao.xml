@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.GoodsDao">
+    <resultMap type="com.entity.Goods" id="goodsMap">
+        <id column="id" property="id"/>
+        <result column="goodsName" property="goodsName"/>
+        <result column="price" property="price"/>
+        <result column="imgPath" property="imgPath"/>
+        <result column="deployDate" property="deployDate"/>
+        <result column="description" property="description"/>
+        <result column="typeId" property="typeId"/>
+
+        <!--对一-->
+        <association property="goodsType" javaType="com.entity.GoodsType">
+            <id property="id" column="id"></id>
+            <result property="typename" column="typename"/>
+        </association>
+
+    </resultMap>
+
+    <insert id="addGoods" parameterType="com.entity.Goods">
+        insert into t_goods(goodsName,price, imgPath,description,typeId)
+         values(#{goodsName},#{price},#{imgPath},#{description},#{typeId})
+    </insert>
+
+    <delete id="delGoodsById" parameterType="int">
+        delete from t_goods where id=#{id}
+    </delete>
+
+    <update id="updateGoodsById" parameterType="com.entity.Goods">
+        update t_goods set goodsName=#{goodsName},price=#{price},imgPath=#{imgPath},
+        description=#{description},typeId=#{typeId} where id=#{id}
+    </update>
+
+
+    <select id="getGoodsAndTypeFuzzy" resultMap="goodsMap">
+        select * from fengmi.t_goods,fengmi.t_goodstype
+        where t_goods.typeId=t_goodstype.id
+        <if test="typeId != null and typeId != ''">
+            and typeId = ${typeId}
+        </if>
+        <if test="goodsName !=null and goodsName != ''">
+            and goodsName like '%${goodsName}%'
+        </if>
+        limit ${begin},${pageSize}
+    </select>
+
+    <select id="getGoodsDataCoutn" resultType="int">
+        select count(1) from fengmi.t_goods ,fengmi.t_goodstype where
+        t_goods.typeId=t_goodstype.id
+        <if test="typeId != 0 and typeId != null">
+            and typeId = ${typeId}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            and goodsName = '%${goodsName}%'
+        </if>
+    </select>
+
+    <select id="getGoodsByName" resultMap="goodsMap">
+        select goodsName from t_goods where goodsName = #{goodsName}
+    </select>
+
+    <select id="getGoods" resultMap="goodsMap">
+        select * from t_goods where t_goods.id = #{id}
+    </select>
+
+    <select id="getGoodsByTypeId" resultType="int">
+        select count(1) from t_goods where t_goods.typeId = #{typeId}
+    </select>
+</mapper>
